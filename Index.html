@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StreamFlexi Pro Max - Ultimate Streaming</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Inter',sans-serif}
+body{background:#050507;color:#fff;min-height:100vh}
+header{padding:14px 16px;display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.8);backdrop-filter:blur(12px);position:sticky;top:0;z-index:50;border-bottom:1px solid #1a1a1a}
+.logo{font-weight:800;font-size:20px;background:linear-gradient(90deg,#ff0055,#ffcc00);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.search-box{flex:1;margin:0 12px;position:relative}
+.search-box input{width:100%;background:#111;padding:10px 14px 10px 36px;border-radius:20px;border:1px solid #222;color:#fff;outline:none}
+.search-box span{position:absolute;left:12px;top:10px}
+.hero{padding:20px 16px;background:radial-gradient(600px at 20% 0%,#ff005522,transparent),radial-gradient(600px at 80% 0%,#00ccff22,transparent)}
+.hero h1{font-size:28px;line-height:1.1;font-weight:800}
+.hero p{color:#888;margin-top:8px;font-size:14px}
+.tabs{display:flex;gap:8px;margin-top:16px;overflow:auto}
+.tab{padding:8px 16px;border-radius:20px;background:#111;border:1px solid #222;white-space:nowrap;cursor:pointer;font-size:13px;font-weight:600}
+.tab.active{background:#fff;color:#000}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:16px}
+.card{background:#0f0f0f;border:1px solid #1e1e1e;border-radius:16px;overflow:hidden;cursor:pointer;transition:.2s}
+.card:hover{transform:scale(1.02);border-color:#333}
+.card img{width:100%;aspect-ratio:2/3;object-fit:cover;background:#111}
+.card-body{padding:10px}
+.card-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card-meta{display:flex;justify-content:space-between;align-items:center;margin-top:6px}
+.rating{display:flex;align-items:center;gap:4px;background:#1a1a1a;padding:3px 7px;border-radius:10px;font-size:11px}
+.rating b{color:#ffcc00}
+.quality{font-size:10px;background:#ff0055;padding:2px 6px;border-radius:6px;font-weight:800}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:100;display:none;overflow:auto}
+.modal.active{display:block}
+.modal-inner{max-width:600px;margin:auto;padding:0 0 40px}
+.modal-hero{position:relative;height:380px;background:#000}
+.modal-hero img{width:100%;height:100%;object-fit:cover;opacity:.6}
+.modal-hero::after{content:'';position:absolute;inset:0;background:linear-gradient(to top,#050507 10%,transparent)}
+.modal-close{position:absolute;top:16px;left:16px;background:#000000aa;border:1px solid #333;width:36px;height:36px;border-radius:50%;color:#fff;font-size:20px;cursor:pointer;z-index:2}
+.modal-content{padding:16px;margin-top:-80px;position:relative;z-index:2}
+.badge-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.badge{background:#111;border:1px solid #222;padding:4px 8px;border-radius:8px;font-size:11px}
+.badge.gold{background:#ffcc00;color:#000;font-weight:800;border:none}
+.m-title{font-size:24px;font-weight:800}
+.m-meta{display:flex;gap:10px;margin:8px 0;color:#aaa;font-size:13px}
+.stars{color:#ffcc00;letter-spacing:2px;font-size:16px}
+.btn-row{display:flex;gap:10px;margin:16px 0}
+.btn{flex:1;padding:14px;border-radius:12px;border:none;font-weight:800;cursor:pointer;font-size:14px}
+.btn-play{background:#fff;color:#000}
+.btn-trailer{background:#1a1a1a;color:#fff;border:1px solid #333}
+.desc{color:#aaa;line-height:1.6;font-size:13px;margin-top:12px}
+.player-wrap{aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden;margin:12px 0;border:1px solid #222;display:none}
+.player-wrap.active{display:block}
+iframe{width:100%;height:100%;border:none}
+</style>
+</head>
+<body>
+<header>
+<div class="logo">StreamFlexi PRO MAX</div>
+<div class="search-box"><span>🔍</span><input id="search" placeholder="Search movies, series..."></div>
+<div>👤</div>
+</header>
+
+<div class="hero">
+<h1>Watch Everything.<br>Pro Max Quality.</h1>
+<p>5-Star Rated • HD • Trailers • No Ads</p>
+<div class="tabs">
+<div class="tab active" data-f="all">All 🔥</div>
+<div class="tab" data-f="trending">Trending</div>
+<div class="tab" data-f="movies">Movies 🎬</div>
+<div class="tab" data-f="series">Series 📺</div>
+<div class="tab" data-f="top">Top Rated ⭐</div>
+</div>
+</div>
+
+<div class="grid" id="grid"></div>
+
+<div class="modal" id="modal">
+<div class="modal-inner">
+<div class="modal-hero">
+<button class="modal-close" onclick="closeModal()">✕</button>
+<img id="m-img" src="">
+</div>
+<div class="modal-content">
+<div class="badge-row">
+<span class="badge gold" id="m-rating">⭐ 4.9</span>
+<span class="badge" id="m-quality">4K HDR</span>
+<span class="badge" id="m-year">2024</span>
+<span class="badge" id="m-type">Movie</span>
+</div>
+<div class="m-title" id="m-title">Title</div>
+<div class="m-meta">
+<span id="m-stars" class="stars">★★★★★</span>
+<span id="m-votes">12.4k votes</span>
+</div>
+<div class="btn-row">
+<button class="btn btn-play" onclick="playNow()">▶ Play Now</button>
+<button class="btn btn-trailer" onclick="playTrailer()">🎬 Trailer</button>
+</div>
+<div class="player-wrap" id="playerWrap">
+<iframe id="player" allowfullscreen></iframe>
+</div>
+<div class="desc" id="m-desc"></div>
+</div>
+</div>
+</div>
+
+<script>
+const movies=[
+{t:"Dune: Part Two",y:2024,r:4.9,v:"18.2k",type:"movies",q:"IMAX 4K",cat:"trending",img:"https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg",d:"Paul Atreides unites with Chani and the Fremen while seeking revenge against the conspirators who destroyed his family. Ultimate sci-fi experience in Pro Max quality.",trailer:"https://www.youtube.com/embed/Way9Dexny3w",play:"https://www.youtube.com/embed/Way9Dexny3w"},
+{t:"Inside Out 2",y:2024,r:4.8,v:"14.5k",type:"movies",q:"4K HDR",cat:"trending",img:"https://image.tmdb.org/t/p/w500/stKGOm8UyhuLPR9sZLjs5AkmncA.jpg",d:"Joy, Sadness, Anger, Fear and Disgust have been running a successful operation. When Anxiety shows up, everything changes. Pixar perfection.",trailer:"https://www.youtube.com/embed/LEjhY15eCx0",play:"https://www.youtube.com/embed/LEjhY15eCx0"},
+{t:"Deadpool & Wolverine",y:2024,r:4.9,v:"22.1k",type:"movies",q:"4K DOLBY",cat:"top",img:"https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg",d:"Deadpool teams up with Wolverine in the most insane Marvel adventure yet. R-rated, hilarious, and full of cameos.",trailer:"https://www.youtube.com/embed/73_1biulkYk",play:"https://www.youtube.com/embed/73_1biulkYk"},
+{t:"The Bear S3",y:2024,r:4.8,v:"9.8k",type:"series",q:"HD",cat:"trending",img:"https://image.tmdb.org/t/p/w500/7jEVqXC14bhfAzSPgrr5FOY4uH.jpg",d:"Carmy, Sydney and Richie work to elevate their restaurant while navigating personal chaos. Emmy-winning series.",trailer:"https://www.youtube.com/embed/NR1viAIu2gA",play:"https://www.youtube.com/embed/NR1viAIu2gA"},
+{t:"Shogun",y:2024,r:5.0,v:"11.2k",type:"series",q:"4K HDR",cat:"top",img:"https://image.tmdb.org/t/p/w500/7O4iVfOMQmdCSxhOg1WnzG18Lrs.jpg",d:"Feudal Japan epic. Lord Yoshii Toranaga fights for his life as his enemies unite. Visually stunning masterpiece.",trailer:"https://www.youtube.com/embed/jAyZAHhZzqE",play:"https://www.youtube.com/embed/jAyZAHhZzqE"},
+{t:"Godzilla x Kong",y:2024,r:4.6,v:"13.4k",type:"movies",q:"IMAX",cat:"movies",img:"https://image.tmdb.org/t/p/w500/z1p34vh7dEOnLDmyCrlUVLuoDzd.jpg",d:"The new empire rises. Godzilla and Kong team up against a colossal threat. Monster mayhem in Pro Max.",trailer:"https://www.youtube.com/embed/lV1OOlGwExM",play:"https://www.youtube.com/embed/lV1OOlGwExM"},
+{t:"Fallout",y:2024,r:4.9,v:"15.7k",type:"series",q:"4K DOLBY",cat:"top",img:"https://image.tmdb.org/t/p/w500/bk3TQ6Qa5HSkEYd3yW5c3cOQb7O.jpg",d:"In a future, post-apocalyptic Los Angeles brought about by nuclear decimation, citizens must live in underground bunkers.",trailer:"https://www.youtube.com/embed/0kQ8i2SvIa8",play:"https://www.youtube.com/embed/0kQ8i2SvIa8"},
+{t:"Kung Fu Panda 4",y:2024,r:4.7,v:"8.9k",type:"movies",q:"4K HDR",cat:"movies",img:"https://image.tmdb.org/t/p/w500/kDp1vUBnMpe8ak4rjglPmCLeLqj.jpg",d:"Po must train a new warrior when he's chosen to become spiritual leader of Valley of Peace.",trailer:"https://www.youtube.com/embed/_inKs4eeHiI",play:"https://www.youtube.com/embed/_inKs4eeHiI"},
+];
+let current=null;
+const grid=document.getElementById('grid');
+function render(list){
+ grid.innerHTML=list.map((m,i)=>`
+ <div class="card" onclick="openModal(${movies.indexOf(m)})">
+ <img src="${m.img}" loading="lazy">
+ <div class="card-body">
+ <div class="card-title">${m.t}</div>
+ <div class="card-meta">
+ <div class="rating"><span>⭐</span><b>${m.r}</b></div>
+ <div class="quality">${m.q}</div>
+ </div>
+ </div>
+ </div>
+ `).join('');
+}
+render(movies);
+document.getElementById('search').addEventListener('input',e=>{
+ const q=e.target.value.toLowerCase();
+ render(movies.filter(m=>m.t.toLowerCase().includes(q)));
+});
+document.querySelectorAll('.tab').forEach(tab=>{
+ tab.onclick=()=>{
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  tab.classList.add('active');
+  const f=tab.dataset.f;
+  if(f==='all') render(movies);
+  else if(f==='top') render(movies.filter(m=>m.r>=4.8));
+  else if(f==='trending') render(movies.filter(m=>m.cat==='trending'));
+  else render(movies.filter(m=>m.type===f));
+ }
+});
+function openModal(i){
+ current=movies[i];
+ document.getElementById('m-img').src=current.img;
+ document.getElementById('m-title').textContent=current.t;
+ document.getElementById('m-rating').textContent=`⭐ ${current.r} • 5-Star`;
+ document.getElementById('m-quality').textContent=current.q;
+ document.getElementById('m-year').textContent=current.y;
+ document.getElementById('m-type').textContent=current.type;
+ document.getElementById('m-votes').textContent=`${current.v} votes • Pro Max Verified`;
+ document.getElementById('m-desc').textContent=current.d;
+ document.getElementById('m-stars').textContent='★★★★★'.slice(0,Math.round(current.r));
+ document.getElementById('playerWrap').classList.remove('active');
+ document.getElementById('modal').classList.add('active');
+}
+function closeModal(){
+ document.getElementById('modal').classList.remove('active');
+ document.getElementById('player').src='';
+ document.getElementById('playerWrap').classList.remove('active');
+}
+function playTrailer(){
+ document.getElementById('playerWrap').classList.add('active');
+ document.getElementById('player').src=current.trailer+"?autoplay=1";
+}
+function playNow(){
+ document.getElementById('playerWrap').classList.add('active');
+ document.getElementById('player').src=current.play+"?autoplay=1";
+}
+</script>
+</body>
+</html>
